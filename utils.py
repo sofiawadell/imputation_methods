@@ -2,7 +2,7 @@
 import numpy as np
 from datasets import datasets
 
-def normalize_data(data, parameters=None):
+def normalization (data, parameters=None):
   '''Normalize data in [0, 1] range.
   
   Args:
@@ -28,10 +28,11 @@ def normalize_data(data, parameters=None):
       min_val[i] = np.nanmin(norm_data[:,i])
       norm_data[:,i] = norm_data[:,i] - np.nanmin(norm_data[:,i])
       max_val[i] = np.nanmax(norm_data[:,i])
-      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])   
+      norm_data[:,i] = norm_data[:,i] / (np.nanmax(norm_data[:,i]) - min_val[i] + 1e-6)   
       
     # Return norm_parameters for renormalization
-    norm_parameters = {'min_val': min_val, 'max_val': max_val}
+    norm_parameters = {'min_val': min_val,
+                       'max_val': max_val}
 
   else:
     min_val = parameters['min_val']
@@ -40,10 +41,10 @@ def normalize_data(data, parameters=None):
     # For each dimension
     for i in range(dim):
       norm_data[:,i] = norm_data[:,i] - min_val[i]
-      norm_data[:,i] = norm_data[:,i] / (max_val[i] -min_val[i])  
+      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)  
       
-    norm_parameters = parameters   
-
+    norm_parameters = parameters    
+      
   return norm_data, norm_parameters
 
   
