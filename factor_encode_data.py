@@ -11,11 +11,7 @@ dataset.
 '''
 # Determine dataset, missingness and mode (test/train)
 all_datasets = ["mushroom", "news", "credit", "letter", "bank"]
-#all_datasets = ["credit"]
 all_missingness = [10, 30, 50, 70]
-
-#dataset = "credit"
-#missingness = 70
 
 for dataset in all_datasets:
     for missingness in all_missingness:
@@ -32,7 +28,7 @@ for dataset in all_datasets:
 
         full_data_complete = pd.concat([train_data_complete, test_data_complete], axis=0)
         target_col_full_data_complete = full_data_complete[target_col]
-        full_data_complete = full_data_complete.drop(target_col, axis=1)
+        full_data_complete = full_data_complete.drop(target_col, axis=1) # Full data without missingness
 
         # Concatenate datasets with missingness
         filename_train_x = 'train_data/{}_train_{}.csv'.format(dataset, missingness)
@@ -43,7 +39,7 @@ for dataset in all_datasets:
 
         full_data_x = pd.concat([train_data_x, test_data_x], axis=0)
         target_col_full_data_x = full_data_x[target_col]
-        full_data_x = full_data_x.drop(target_col, axis=1)
+        full_data_x = full_data_x.drop(target_col, axis=1) # Full data with missingness without target column
 
         # Create copy of dataframes
         df_full_data_complete = full_data_complete.copy()
@@ -52,21 +48,13 @@ for dataset in all_datasets:
         # Loop through each categorical column and apply dummy encoding
         for col in cat_cols:
 
-            # Perform one-hot encoding on the column, specifying the column order and feature name prefix
-            prefix = col
-            encoded_col_missing = pd.get_dummies(full_data_x[col], prefix=prefix, columns=categories)
-            encoded_col_complete = pd.get_dummies(full_data_complete[col], prefix=prefix, columns=categories)
-
-            # Replace any rows with missing values with NaN
-            encoded_col_missing[full_data_x[col].isna()] = pd.NA
+            # Perform factor encoding on the column 
+            df_full_data_x[col+'_encoded'] = pd.factorize(df_full_data_x[col])[0]
+            df_full_data_complete[col+'_encoded'] = pd.factorize(df_full_data_complete[col])[0]
                             
-            # Add the encoded column(s) to the new dataframe
-            df_full_data_complete = pd.concat([df_full_data_complete, encoded_col_complete], axis=1)
-            df_full_data_x  = pd.concat([df_full_data_x, encoded_col_missing], axis=1)
-
-        # Remove the original categorical columns from the new dataframe
-        df_full_data_x.drop(cat_cols, axis=1, inplace=True)
-        df_full_data_complete.drop(cat_cols, axis=1, inplace=True)
+            # Remove the original categorical columns from the new dataframe
+            df_full_data_x.drop(col, axis=1, inplace=True)
+            df_full_data_complete.drop(col, axis=1, inplace=True)
 
         # Add back the target column
         df_full_data_x[target_col] = target_col_full_data_x
@@ -77,14 +65,14 @@ for dataset in all_datasets:
         train_data_x, test_data_x = np.vsplit(df_full_data_x, [len(train_data_x)])
 
         # Save to CSV
-        filename_train_complete = 'one_hot_train_data/one_hot_{}_train.csv'.format(dataset)
+        filename_train_complete = 'factor_train_data/factor_encode_{}_train.csv'.format(dataset)
         train_data_complete.to_csv(filename_train_complete, index=False)
-        filename_test_complete = 'one_hot_test_data/one_hot_{}_test.csv'.format(dataset)
+        filename_test_complete = 'factor_test_data/factor_encode_{}_test.csv'.format(dataset)
         test_data_complete.to_csv(filename_test_complete, index=False)
 
-        filename_train_x = 'one_hot_train_data/one_hot_{}_train_{}.csv'.format(dataset, missingness)
+        filename_train_x = 'factor_train_data/factor_encode_{}_train_{}.csv'.format(dataset, missingness)
         train_data_x.to_csv(filename_train_x, index=False)
-        filename_test_x = 'one_hot_test_data/one_hot_{}_test_{}.csv'.format(dataset, missingness)
+        filename_test_x = 'factor_test_data/factor_encode_{}_test_{}.csv'.format(dataset, missingness)
         test_data_x.to_csv(filename_test_x, index=False)
 
         print(test_data_x.shape)
