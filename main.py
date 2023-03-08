@@ -9,9 +9,7 @@ from run_imputation_methods import run_MICE
 from run_imputation_methods import run_kNN
 from run_imputation_methods import run_median_mode
 
-from missForest_impute import missForest_impute
-from mice_impute import mice_impute
-# from utils import normalize_num_data
+from utils import normalization
 
 def main (data_name, miss_rate, method):
 
@@ -21,8 +19,7 @@ def main (data_name, miss_rate, method):
 
     # Find max/min values for entire data set to enable normalization for numerical variables 
     full_data = data_loader_full(data_name, miss_rate)
-    # num_norm_data, norm_parameters = normalize_num_data(full_data)
-    norm_parameters = 1
+    norm_data, norm_parameters = normalization(full_data)
     
     # Choose method for imputation
     if method == "missForest": # Impute missing data for test and training data for MissForest

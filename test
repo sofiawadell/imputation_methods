@@ -2,6 +2,26 @@ import pandas as pd
 import numpy as np
 
 from data_loader import data_loader_ohe
+from data_loader import data_loader
+
+from datasets import datasets
+
+data_name = "credit"
+miss_rate = 0.1 
+
+
+def factor_encode_categorical(df, col_indices):
+
+    for col_index in col_indices:
+        col_name = df.columns[col_index]
+        
+        # factor encode the column
+        df[col_name] = pd.factorize(df.iloc[:, col_index])[0]
+        
+        # remove the original column
+        df.drop(col_name, axis=1, inplace=True)
+        
+    return df
 
 print("123445")
 
@@ -9,12 +29,16 @@ data_name = "credit"
 miss_rate = 0.1 
 
 # Load OHE data
-train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_ohe(data_name, miss_rate) 
+train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader(data_name, miss_rate) 
 
-# Define mask matrix
-mask_train = 1-np.isnan(train_miss_data_x)
+copy = train_data_x
+# Find col indicies 
+cat_cols = datasets[data_name]["cat_cols"]
 
-print(pd.DataFrame(mask_train))
+for col in cat_cols:
+    copy[col+'_encoded'] = pd.factorize(copy[col])[0]
+    copy.drop(col, axis=1, inplace=True)
+
 
 #### KLADD ####
 
