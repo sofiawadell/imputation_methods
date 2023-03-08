@@ -2,16 +2,26 @@ import pandas as pd
 import numpy as np
 
 from data_loader import data_loader_ohe
-from sklearn.impute import KNNImputer
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import cross_val_score, KFold
+
+print("123445")
 
 data_name = "credit"
-miss_rate = 0.1
+miss_rate = 0.1 
 
+# Load OHE data
 train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_ohe(data_name, miss_rate) 
 
-# Transform to numpy 
-train_data_x_np, train_miss_data_x_np, test_data_x_np, test_miss_data_x_np = train_data_x.values, train_miss_data_x.values, test_data_x.values, test_miss_data_x.values
+# Define mask matrix
+mask_train = 1-np.isnan(train_miss_data_x)
 
-print(test_miss_data_x_np.shape)
+print(pd.DataFrame(mask_train))
+
+#### KLADD ####
+
+# def save_imputed_data():
+    # missingness = 10
+    # dataset = "credit"
+    # mode = "train"
+    # train_imputed_data_x_mf_pd = pd.DataFrame(train_imputed_data_x_mf)
+    # save_filename_missing = '{}{}_{}{}_{}_{}.csv'.format('one_hot_', mode, 'data/one_hot_', dataset, mode, missingness)
+    # train_imputed_data_x_mf_pd.to_csv(save_filename_missing, index=False)

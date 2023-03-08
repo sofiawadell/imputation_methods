@@ -26,13 +26,13 @@ def main (data_name, miss_rate, method):
     
     # Choose method for imputation
     if method == "missForest": # Impute missing data for test and training data for MissForest
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x = run_mf(data_name, miss_rate, norm_parameters)
+        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_xm, mask_train, mask_test = run_mf(data_name, miss_rate, norm_parameters)
     elif method == "MICE": # Impute using MICE 
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x = run_MICE(data_name, miss_rate, norm_parameters)
+        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_MICE(data_name, miss_rate, norm_parameters)
     elif method == "kNN": # Impute using kNN 
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x = run_kNN(data_name, miss_rate, norm_parameters)
+        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_kNN(data_name, miss_rate, norm_parameters)
     elif method == "median/mode":
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x = run_median_mode(data_name, miss_rate, norm_parameters)
+        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_median_mode(data_name, miss_rate, norm_parameters)
     else:
         ValueError("Method not found")
 
