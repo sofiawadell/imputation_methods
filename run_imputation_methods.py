@@ -1,6 +1,6 @@
 import numpy as np
 
-from data_loader import data_loader
+from data_loader import data_loader_factor
 from data_loader import data_loader_ohe
 from missForest_impute import missForest_impute
 from mice_impute import mice_impute
@@ -30,7 +30,7 @@ def run_mf(data_name, miss_rate, norm_parameters):
 def run_MICE(data_name, miss_rate, norm_parameters):
 
     # Load data, introduce missingness & dummy encode 
-    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader(data_name, miss_rate) 
+    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor(data_name, miss_rate) 
     
     # TBU: Dummy encode data
 
@@ -72,7 +72,7 @@ def run_kNN(data_name, miss_rate, norm_parameters):
 
 def run_median_mode(data_name, miss_rate, norm_parameters):
     # Load data, introduce missingness & dummy encode 
-    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader(data_name, miss_rate) 
+    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor(data_name, miss_rate) 
     # TBU: Dummy encode data
 
     # Define mask matrix
