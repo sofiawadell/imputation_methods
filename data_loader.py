@@ -15,7 +15,7 @@ def data_loader_full(data_name, miss_rate):
         ValueError("Dataset not found")            
     return full_data
 
-def data_loader (data_name, miss_rate):
+def data_loader(data_name, miss_rate):
   '''Loads datasets and introduce missingness.
   
   Args:
@@ -87,4 +87,32 @@ def data_loader_ohe(data_name, miss_rate):
         ValueError("Dataset not found")
         
     return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x
+
+def data_loader_factor(data_name, miss_rate):
+    missingness_str = str(int(miss_rate*100))
+
+    ## Load training data
+    if data_name in datasets.keys():
+        train_data_x = pd.read_csv('factor_train_data/factor_encode_'+data_name+'_train.csv')    
+    else:
+        ValueError("Dataset not found")
     
+    # Load train missing data with correct missingness
+    if data_name in datasets.keys():   
+        train_miss_data_x = pd.read_csv('factor_train_data/factor_encode_'+data_name+'_train_'+missingness_str+'.csv')
+    else:
+        ValueError("Dataset not found")
+
+    ## Load test data
+    if data_name in datasets.keys():
+        test_data_x = pd.read_csv('factor_test_data/factor_encode_'+data_name+'_test.csv') 
+    else:
+        ValueError("Dataset not found")
+
+    # Load test missing data with correct missingness
+    if data_name in datasets.keys():   
+        test_miss_data_x = pd.read_csv('factor_test_data/factor_encode_'+data_name+'_test_'+missingness_str+'.csv') 
+    else:
+        ValueError("Dataset not found")
+        
+    return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x    

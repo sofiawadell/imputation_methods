@@ -1,12 +1,11 @@
+
 import pandas as pd
 import numpy as np
 from datasets import datasets
 
 ''' Description
 
-Two datasets, one complete and one incomplete. Remove target variable and then do one-hot-encoding
-where the whole row for a certain feature is replaced with NaN if the value was missing in the no one-hot-encoded
-dataset. 
+xx
 
 '''
 # Determine dataset, missingness and mode (test/train)
@@ -48,9 +47,16 @@ for dataset in all_datasets:
         # Loop through each categorical column and apply dummy encoding
         for col in cat_cols:
 
-            # Perform factor encoding on the column 
-            df_full_data_x[col+'_encoded'] = pd.factorize(df_full_data_x[col])[0]
-            df_full_data_complete[col+'_encoded'] = pd.factorize(df_full_data_complete[col])[0]
+            col_encoded_name = col + '_encoded'
+            unique_values = df_full_data_complete[col].dropna().unique()  # exclude np.nan values
+            mapping = dict(zip(unique_values, range(len(unique_values))))
+            df_full_data_complete[col_encoded_name] = df_full_data_complete[col].replace(mapping)
+            df_full_data_complete[col_encoded_name] = df_full_data_complete[col_encoded_name].replace({np.nan: np.nan})
+
+            unique_values = df_full_data_x[col].dropna().unique()  # exclude np.nan values
+            mapping = dict(zip(unique_values, range(len(unique_values))))
+            df_full_data_x[col_encoded_name] = df_full_data_x[col].replace(mapping)
+            df_full_data_x[col_encoded_name] = df_full_data_x[col_encoded_name].replace({np.nan: np.nan})
                             
             # Remove the original categorical columns from the new dataframe
             df_full_data_x.drop(col, axis=1, inplace=True)
