@@ -32,7 +32,7 @@ def run_mf(data_name, miss_rate):
 
 def run_MICE(data_name, miss_rate):
 
-    # Load data, introduce missingness & dummy encode 
+    # Load data without, introduce missingness & dummy encode 
     train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor(data_name, miss_rate) 
     
     # Define mask matrix 
@@ -98,5 +98,5 @@ def run_median_mode(data_name, miss_rate):
     test_imputed_norm_data_x, train_imputed_norm_data_x = median_mode_impute(train_miss_data_x, test_miss_data_x)
 
     # Renormalize data sets
-    
+
     return train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test, norm_params 
