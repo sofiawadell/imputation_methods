@@ -6,7 +6,7 @@ from sklearn.impute import KNNImputer
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score, KFold
 
-def knn_impute(train_data_x_np, train_miss_data_x_np, test_data_x_np, test_miss_data_x_np):
+def knn_impute(train_data_x_np, train_miss_data_x_np, test_data_x_np, test_miss_data_x_np, best_k):
 
     # Define a range of values for the number of neighbors
     k_values = range(1, 3)

@@ -11,25 +11,21 @@ from run_imputation_methods import run_median_mode
 
 from utils import normalization
 
-def main (data_name, miss_rate, method):
+def main (data_name, miss_rate, method, best_k = None):
 
     # TBU: Method which ensures arguments are correct
     data_name = data_name
     miss_rate = miss_rate #0.1, 0.3, 0.5 and 0.7 
-
-    # Find max/min values for entire data set to enable normalization for numerical variables 
-    full_data = data_loader_full(data_name, miss_rate)
-    norm_data, norm_parameters = normalization(full_data)
     
     # Choose method for imputation
     if method == "missForest": # Impute missing data for test and training data for MissForest
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_xm, mask_train, mask_test = run_mf(data_name, miss_rate, norm_parameters)
+        train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_mf(data_name, miss_rate)
     elif method == "MICE": # Impute using MICE 
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_MICE(data_name, miss_rate, norm_parameters)
+        train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_MICE(data_name, miss_rate)
     elif method == "kNN": # Impute using kNN 
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_kNN(data_name, miss_rate, norm_parameters)
+        train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_kNN(data_name, miss_rate, best_k)
     elif method == "median/mode":
-        train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test = run_median_mode(data_name, miss_rate, norm_parameters)
+        train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_median_mode(data_name, miss_rate)
     else:
         ValueError("Method not found")
 
@@ -43,9 +39,9 @@ def main (data_name, miss_rate, method):
     pfc_categorical = 1
 
     # Save imputed
-    print(pd.DataFrame(test_imputed_norm_data_x))
+    print(pd.DataFrame(train_imputed_data_x))
 
-    return pd.DataFrame(test_imputed_norm_data_x), rmse_num, rmse_cat, pfc_categorical
+    return pd.DataFrame(train_imputed_data_x), rmse_num, rmse_cat, pfc_categorical
 
-test_imputed_norm_data_x, rmse_num, rmse_cat, pfc_categorical = main("credit", 0.1, "kNN")
+train_imputed_data_x, rmse_num, rmse_cat, pfc_categorical = main("credit", 0.1, "kNN")
 
