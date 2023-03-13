@@ -44,7 +44,7 @@ for dataset in all_datasets:
         df_full_data_complete = full_data_complete.copy()
         df_full_data_x = full_data_x.copy()
 
-        # Loop through each categorical column and apply dummy encoding
+        # Loop through each categorical column and apply factor encoding
         for col in cat_cols:
 
             col_encoded_name = col + '_encoded'
