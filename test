@@ -1,11 +1,19 @@
-from data_loader import data_loader_ohe
+from data_loader import data_loader_factor_wo_target
+import numpy as np
+from datasets import datasets
+import pandas as pd
 
 data_name = 'credit'
 miss_rate = 0.1
+missingness = miss_rate*100
 
-# Load OHE data
-train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_ohe(data_name, miss_rate) 
+# Test normalization of numerical variables 
+train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
 
-# Normalize all data sets based on training data
-data = [train_data_x,train_miss_data_x, test_data_x, test_miss_data_x]
-train_data_norm_x, train_miss_data_norm_x, test_data_norm_x, test_miss_data_norm_x = [normalization(d,norm_parameters) for d in data]
+data = train_data_x
+normalize_numeric(data, data_name, parameters=None):
+
+filename_train_norm = 'norm_factor_train_data_wo_target/norm_factor_encode_TEST_train_{}.csv'.format(missingness)
+norm_data_pd.to_csv(filename_train_norm, index=False)
+      
+
