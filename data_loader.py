@@ -6,6 +6,8 @@ from datasets import datasets
 import numpy as np
 import pandas as pd
 
+
+
 def data_loader_full(data_name, miss_rate):
 ## Load training data
     if data_name in datasets.keys():
@@ -13,6 +15,8 @@ def data_loader_full(data_name, miss_rate):
     else:
         ValueError("Dataset not found")            
     return full_data
+
+
 
 def data_loader(data_name, miss_rate):
   '''Loads datasets and introduce missingness.
@@ -58,6 +62,8 @@ def data_loader(data_name, miss_rate):
       
   return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x
 
+
+
 def data_loader_ohe(data_name, miss_rate):
     missingness_str = str(int(miss_rate*100))
 
@@ -86,6 +92,8 @@ def data_loader_ohe(data_name, miss_rate):
         ValueError("Dataset not found")
         
     return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x
+
+
 
 def data_loader_factor(data_name, miss_rate):
     missingness_str = str(int(miss_rate*100))
@@ -116,6 +124,8 @@ def data_loader_factor(data_name, miss_rate):
         
     return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x    
 
+
+
 def data_loader_factor_wo_target(data_name, miss_rate):
     missingness_str = str(int(miss_rate*100))
 
@@ -144,3 +154,22 @@ def data_loader_factor_wo_target(data_name, miss_rate):
         ValueError("Dataset not found")
         
     return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x    
+
+
+
+def data_loader_mice_imputed_data(data_name, miss_rate):
+    missingness_str = str(int(miss_rate*100))
+    
+    # Load normalized imputed train missing data with correct missingness
+    if data_name in datasets.keys():   
+        train_imp_norm_data_x = pd.read_csv('imputed_mice_train_data/norm_imputed_mice'+data_name+'_train_'+missingness_str+'.csv')
+    else:
+        ValueError("Dataset not found")
+
+    # Load normalized imputed test missing data with correct missingness
+    if data_name in datasets.keys():   
+        test_imp_norm_data_x = pd.read_csv('imputed_mice_test_data/norm_imputed_mice'+data_name+'_test_'+missingness_str+'.csv') 
+    else:
+        ValueError("Dataset not found")
+        
+    return train_imp_norm_data_x, test_imp_norm_data_x

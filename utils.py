@@ -12,7 +12,7 @@ def normalization (data, parameters=None):
   Returns:
     - norm_data: normalized data
     - norm_parameters: min_val, max_val for each feature for renormalization
-  '''
+  '''  
 
   # Parameters
   _, dim = data.shape
@@ -20,16 +20,17 @@ def normalization (data, parameters=None):
   
   if parameters is None:
   
-    # MixMax normalization
+    # MinMax normalization
     min_val = np.zeros(dim)
     max_val = np.zeros(dim)
-    
+  
+
     # For each dimension
     for i in range(dim):
       min_val[i] = np.nanmin(norm_data[:,i])
-      norm_data[:,i] = norm_data[:,i] - np.nanmin(norm_data[:,i])
       max_val[i] = np.nanmax(norm_data[:,i])
-      norm_data[:,i] = norm_data[:,i] / (np.nanmax(norm_data[:,i]) - min_val[i] + 1e-6)   
+      norm_data[:,i] = norm_data[:,i] - min_val[i]
+      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)   
       
     # Return norm_parameters for renormalization
     norm_parameters = {'min_val': min_val,
@@ -65,7 +66,6 @@ def normalize_numeric(data, data_name, parameters=None):
 
   num_cols = datasets[data_name]["num_cols"]
   nbr_of_num_cols = len(num_cols)
-  parameters = None
 
   norm_data = data_np.copy().astype(float)
 
@@ -77,14 +77,15 @@ def normalize_numeric(data, data_name, parameters=None):
 
     # For each dimension
     for i in range(nbr_of_num_cols):
-        min_val[i] = np.nanmin(norm_data[:,i])
-        norm_data[:,i] = norm_data[:,i] - np.nanmin(norm_data[:,i])
-        max_val[i] = np.nanmax(norm_data[:,i])
-        norm_data[:,i] = norm_data[:,i] / (np.nanmax(norm_data[:,i]) - min_val[i])   
+      min_val[i] = np.nanmin(norm_data[:,i])
+      max_val[i] = np.nanmax(norm_data[:,i])
+      norm_data[:,i] = norm_data[:,i] - min_val[i]
+      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)   
         
     # Return norm_parameters for renormalization
     norm_parameters = {'min_val': min_val,
                         'max_val': max_val}
+    
     norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
 
   else:
@@ -94,12 +95,13 @@ def normalize_numeric(data, data_name, parameters=None):
     # For each dimension
     for i in range(nbr_of_num_cols):
         norm_data[:,i] = norm_data[:,i] - min_val[i]
-        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])  
+        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)  
     
     norm_parameters = parameters 
     norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
 
   return norm_data_pd, norm_parameters
+
 
 def renormalization (norm_data, norm_parameters):
   '''Renormalize data from [0, 1] range to the original range.
@@ -124,28 +126,36 @@ def renormalization (norm_data, norm_parameters):
     
   return renorm_data
 
-def renormalize_numeric (norm_data, norm_parameters):
-  '''Renormalize data from [0, 1] range to the original range.
+
+def renormalize_numeric (norm_data, norm_parameters, data_name):
+  '''Renormalize numeric columns from [0, 1] range to the original range.
   
   Args:
-    - norm_data: normalized data
-    - norm_parameters: min_val, max_val for each feature for renormalization
+    - norm_data: normalized data (entire data set)
+    - norm_parameters: min_val, max_val for each numerical feature for renormalization
   
   Returns:
     - renorm_data: renormalized original data
   '''
   
+  # Renormalize data 
+  data_norm_np = norm_data.values #Transform to numpy
+
   min_val = norm_parameters['min_val']
   max_val = norm_parameters['max_val']
 
-  _, dim = norm_data.shape
-  renorm_data = norm_data.copy()
+  num_cols = datasets[data_name]["num_cols"]
+  nbr_of_num_cols = len(num_cols)
+  renorm_data = data_norm_np.copy()
+
+  for i in range(nbr_of_num_cols):
+      renorm_data[:,i] = renorm_data[:,i] * (max_val[i] - min_val[i] + 1e-6)   
+      renorm_data[:,i] = renorm_data[:,i] + min_val[i]
+
+  # Change to pandas 
+  renorm_data_pd = pd.DataFrame(renorm_data, columns=norm_data.columns) 
     
-  for i in range(dim):
-    renorm_data[:,i] = renorm_data[:,i] * (max_val[i] - min_val[i] + 1e-6)   
-    renorm_data[:,i] = renorm_data[:,i] + min_val[i]
-    
-  return renorm_data
+  return renorm_data_pd
 
 def rmse_num_loss(ori_data, imputed_data, data_m, data_name, norm_params):
   '''Compute RMSE loss between ori_data and imputed_data for numerical variables
