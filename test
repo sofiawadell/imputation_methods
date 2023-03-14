@@ -1,6 +1,38 @@
 from data_loader import data_loader_factor_wo_target
+from utils import normalize_numeric
 import numpy as np
 from datasets import datasets
 import pandas as pd
 
+data_name = "credit"
+miss_rate = 0.1
 
+# Normalize data
+train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate)
+train_miss_data_norm_x, norm_params = normalize_numeric(train_miss_data_x, data_name)
+
+# Transition 
+norm_parameters = norm_params
+norm_data = train_miss_data_norm_x
+
+# Renormalize data 
+data_norm_np = norm_data.values #Transform to numpy
+
+min_val = norm_parameters['min_val']
+max_val = norm_parameters['max_val']
+
+num_cols = datasets[data_name]["num_cols"]
+nbr_of_num_cols = len(num_cols)
+renorm_data = data_norm_np.copy()
+
+for i in range(nbr_of_num_cols):
+    renorm_data[:,i] = renorm_data[:,i] * (max_val[i] - min_val[i] + 1e-6)   
+    renorm_data[:,i] = renorm_data[:,i] + min_val[i]
+
+# Change to pandas 
+renorm_data_pd = pd.DataFrame(renorm_data, columns=norm_data.columns) 
+
+# Save data  
+missingness = int(miss_rate*100)
+filename_train_imp_mice = 'imputed_mice_train_data/imputed_mice_{}_train_{}.csv'.format(data_name, missingness)
+renorm_data_pd.to_csv(filename_train_imp_mice, index=False)
