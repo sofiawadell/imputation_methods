@@ -66,7 +66,6 @@ def normalize_numeric(data, data_name, parameters=None):
 
   num_cols = datasets[data_name]["num_cols"]
   nbr_of_num_cols = len(num_cols)
-
   norm_data = data_np.copy().astype(float)
 
   if parameters is None:
@@ -157,13 +156,13 @@ def renormalize_numeric (norm_data, norm_parameters, data_name):
     
   return renorm_data_pd
 
-def rmse_num_loss(ori_data, imputed_data, data_m, data_name, norm_params):
-  '''Compute RMSE loss between ori_data and imputed_data for numerical variables
+def rmse_num_loss(ori_data_norm, imputed_data_norm, data_m, data_name, norm_params):
+  '''Compute RMSE loss between normalized ori_data and imputed_data for numerical variables
   
   Args:
-    - ori_data: original data without missing values
-    - imputed_data: imputed data
-    - data_m: indicator matrix for missingness
+    - ori_data: normalized original data without missing values
+    - imputed_data: normalized imputed data
+    - data_m: indicator matrix for missingness in the imputed data
     
   Returns:
     - rmse_num: Root Mean Squared Error
@@ -175,10 +174,6 @@ def rmse_num_loss(ori_data, imputed_data, data_m, data_name, norm_params):
   if N_num_cols == 0:
     return None
   else: 
-    # Normalize with norm_params
-    ori_data_norm, _ = normalization(ori_data, norm_params)
-    imputed_data_norm, _ = normalization(imputed_data, norm_params) 
-
     # Extract only the numerical columns
     ori_data_norm_num = ori_data_norm[:, :N_num_cols]
     imputed_data_norm_num = imputed_data_norm[:, :N_num_cols]
@@ -243,3 +238,37 @@ def m_rmse_loss(rmse_num, rmse_cat):
   m_rmse = np.sqrt((rmse_num**2) + (rmse_cat**2))
     
   return m_rmse
+
+def pfc(ori_data, imputed_data, data_m, data_name): # No taking into consideration category belonging now, to be fixed
+  '''Compute PFC between ori_data and imputed_data
+  
+  Args:
+    - ori_data: original data without missing values
+    - imputed_data: imputed data
+    - data_m: indicator matrix for missingness
+    
+  Returns:
+    - pfc: Proportion Falsely Classified
+  '''
+  # Find number of columns
+  # Find number of columns
+  N_num_cols = len(datasets[data_name]["num_cols"])   # Find number of numerical columns
+  N_cat_cols = len(datasets[data_name]["cat_cols"])   # Find number of categorical columns
+  
+  if N_cat_cols == 0:
+    return None
+  else: 
+    # Extract only the categorical columns
+    ori_data_cat = ori_data[:, N_num_cols:]
+    imputed_data_cat = imputed_data[:, N_num_cols:]
+    data_m_cat = data_m[:, N_num_cols:]
+
+    data_m_bool = ~data_m_cat.astype(bool) # True indicates missing value (=0), False indicates non-missing value (=1)
+
+    N_missing = np.count_nonzero(data_m_cat == 0) # 0 = missing value
+    N_correct = np.sum(ori_data_cat[data_m_bool] == imputed_data_cat[data_m_bool])
+
+    # Calculate PFC
+    pfc = (1 - (N_correct/N_missing))*100 # Number of incorrect / Number total missing
+    
+    return pfc

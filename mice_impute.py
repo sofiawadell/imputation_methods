@@ -3,6 +3,10 @@ from data_loader import data_loader_factor_wo_target
 from data_loader import data_loader_mice_imputed_data
 from utils import normalize_numeric
 from utils import renormalize_numeric
+from utils import rmse_num_loss
+from utils import rmse_cat_loss
+from utils import m_rmse_loss
+from utils import pfc
 
 # Parameters to adjust
 data_name = "bank"
@@ -25,7 +29,7 @@ def before_imputation(data_name, miss_rate):
 
     return train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test
 
-def after_imputation(norm_params, data_name, miss_rate):
+def after_imputation(norm_params, data_name, miss_rate, mask_train, mask_test):
     
     # Save normalizing parameters for training data with missingness
     norm_params_train_miss_data = norm_params
@@ -57,11 +61,16 @@ def after_imputation(norm_params, data_name, miss_rate):
     test_imp_data_norm_x, _ = normalize_numeric(test_imp_data_x, data_name, norm_params_full_data_train)
 
     # Calculate RMSE on normalized data and numerical columns 
+    rmse_num = rmse_num_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name, norm_params_full_data_train)
+
+    # Calculate modified RMSE
+    rmse_cat = rmse_cat_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name)
+    m_rmse = m_rmse_loss(rmse_num, rmse_cat)
 
     # Caluclate PFC on normalized data and categorical columns 
-    pfc = 1
-    
-    return train_imp_data_x, test_imp_data_x, rmse, pfc 
+    pfc_value = pfc(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name)
+
+    return train_imp_data_x, test_imp_data_x, rmse_num, pfc_value, m_rmse 
 
 if state == "before imputation":
     # Run before_imputation to get normalized data 
@@ -80,9 +89,12 @@ elif state == "after imputation":
     train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test = before_imputation(data_name, miss_rate)
 
     # Import imputed data sets from R and find RMSE and pfc for testing data 
-    train_imp_data_x, test_imp_data_x, rmse, pfc = after_imputation(norm_params, data_name, miss_rate)
+    train_imp_data_x, test_imp_data_x, rmse, pfc_value, m_rmse = after_imputation(norm_params, data_name, miss_rate, mask_train, mask_test)
 
-    # Export non-normalized 
+    # Print
+    print(rmse)
+    print(pfc_value)
+    print(m_rmse)
 
 else:
     ValueError("State must be either 'before imputation' or 'after imputation'")
