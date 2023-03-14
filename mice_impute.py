@@ -1,9 +1,11 @@
 import numpy as np
 from data_loader import data_loader_factor_wo_target
+from data_loader import data_loader_mice_imputed_data
 from utils import normalize_numeric
 
 data_name = "credit"
 miss_rate = 0.1
+state = "before imputation"
 
 def before_imputation(data_name, miss_rate):
     # Load factor encoded data without target column 
@@ -21,11 +23,10 @@ def before_imputation(data_name, miss_rate):
 
     return train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test
 
-
-def after_imputation(norm_params, data_name, miss_rate, train_imp_data_norm_x, test_imp_data_norm_x):
+def after_imputation(norm_params, data_name, miss_rate):
     
     # Renormalize data using norm_params
-    train_imp_data_x = None
+    train_imp_data_x = data_loader_mice_imputed_data
     test_imp_data_x = None
 
     # Load full training and testing data sets 
@@ -43,18 +44,27 @@ def after_imputation(norm_params, data_name, miss_rate, train_imp_data_norm_x, t
     pfc = 1
     return pfc 
 
+if state == "before imputation":
+    # Run before_imputation to get normalized data 
+    train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test = before_imputation(data_name, miss_rate)
 
-# Run before_imputation to get normalized data 
-train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test = before_imputation(data_name, miss_rate)
+    # Export data sets to R
+    missingness = int(miss_rate*100)
+    filename_train_norm = 'norm_factor_train_data_wo_target/norm_factor_encode_{}_train_{}.csv'.format(data_name, missingness)
+    train_miss_data_norm_x.to_csv(filename_train_norm, index=False)
 
-# Export data sets to R
-missingness = int(miss_rate*100)
-filename_train_norm = 'norm_factor_train_data_wo_target/norm_factor_encode_{}_train_{}.csv'.format(data_name, missingness)
-train_miss_data_norm_x.to_csv(filename_train_norm, index=False)
+    filename_test_norm = 'norm_factor_test_data_wo_target/norm_factor_encode_{}_test_{}.csv'.format(data_name, missingness)
+    test_miss_data_norm_x.to_csv(filename_test_norm, index=False)
+    
+elif state == "after imputation":
+    # Find mask matrix nad norm parameters 
+    train_miss_data_norm_x, test_miss_data_norm_x, norm_params, mask_train, mask_test = before_imputation(data_name, miss_rate)
 
-filename_test_norm = 'norm_factor_test_data_wo_target/norm_factor_encode_{}_test_{}.csv'.format(data_name, missingness)
-test_miss_data_norm_x.to_csv(filename_test_norm, index=False)
+    # Import imputed data sets from R and find RMSE and pfc for testing data 
+    train_imp_data_x, test_imp_data_x, rmse, pfc = after_imputation(norm_params, data_name, miss_rate)
 
-# Import imputed data sets from R 
+    # Export non-normalized 
 
-# Run after imputation and find RMSE and pfc for testing data 
+else:
+    ValueError("State must be before or after imputation")
+

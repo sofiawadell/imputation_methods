@@ -43,7 +43,7 @@ def knn_impute(train_data_x_np, train_miss_data_x_np, test_data_x_np, test_miss_
             fold_rmses.append(np.sqrt(mean_squared_error(y_test, X_test_imputed)))
             print(np.sqrt(mean_squared_error(y_test, X_test_imputed)))
         
-        # Calculate the mean RMSE across all folds for this k value
+        # Calculate the mean RMSE across all folds for this k value 
         rmse_scores[k] = np.mean(fold_rmses)
 
     # Print the RMSE scores for each k value

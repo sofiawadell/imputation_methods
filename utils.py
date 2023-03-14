@@ -101,6 +101,52 @@ def normalize_numeric(data, data_name, parameters=None):
 
   return norm_data_pd, norm_parameters
 
+def renormalization (norm_data, norm_parameters):
+  '''Renormalize data from [0, 1] range to the original range.
+  
+  Args:
+    - norm_data: normalized data
+    - norm_parameters: min_val, max_val for each feature for renormalization
+  
+  Returns:
+    - renorm_data: renormalized original data
+  '''
+  
+  min_val = norm_parameters['min_val']
+  max_val = norm_parameters['max_val']
+
+  _, dim = norm_data.shape
+  renorm_data = norm_data.copy()
+    
+  for i in range(dim):
+    renorm_data[:,i] = renorm_data[:,i] * (max_val[i] - min_val[i] + 1e-6)   
+    renorm_data[:,i] = renorm_data[:,i] + min_val[i]
+    
+  return renorm_data
+
+def renormalize_numeric (norm_data, norm_parameters):
+  '''Renormalize data from [0, 1] range to the original range.
+  
+  Args:
+    - norm_data: normalized data
+    - norm_parameters: min_val, max_val for each feature for renormalization
+  
+  Returns:
+    - renorm_data: renormalized original data
+  '''
+  
+  min_val = norm_parameters['min_val']
+  max_val = norm_parameters['max_val']
+
+  _, dim = norm_data.shape
+  renorm_data = norm_data.copy()
+    
+  for i in range(dim):
+    renorm_data[:,i] = renorm_data[:,i] * (max_val[i] - min_val[i] + 1e-6)   
+    renorm_data[:,i] = renorm_data[:,i] + min_val[i]
+    
+  return renorm_data
+
 def rmse_num_loss(ori_data, imputed_data, data_m, data_name, norm_params):
   '''Compute RMSE loss between ori_data and imputed_data for numerical variables
   
