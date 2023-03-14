@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas as pd
 from datasets import datasets
 
 def normalization (data, parameters=None):
@@ -47,6 +48,58 @@ def normalization (data, parameters=None):
       
   return norm_data, norm_parameters
 
+def normalize_numeric(data, data_name, parameters=None):
+  '''Normalize the numeric columns of a data set in [0, 1] range.
+  
+  Args:
+    - data: original data
+    - data_name: name of data set
+  
+  Returns:
+    - norm_data: full data set where the numeric columns are normalized
+    - norm_parameters: min_val, max_val for each numerical feature for renormalization
+  '''
+
+  # Transform dataframe to numpy array
+  data_np = data.values
+
+  num_cols = datasets[data_name]["num_cols"]
+  nbr_of_num_cols = len(num_cols)
+  parameters = None
+
+  norm_data = data_np.copy().astype(float)
+
+  if parameters is None:
+
+    # MixMax normalization
+    min_val = np.zeros(nbr_of_num_cols)
+    max_val = np.zeros(nbr_of_num_cols)
+
+    # For each dimension
+    for i in range(nbr_of_num_cols):
+        min_val[i] = np.nanmin(norm_data[:,i])
+        norm_data[:,i] = norm_data[:,i] - np.nanmin(norm_data[:,i])
+        max_val[i] = np.nanmax(norm_data[:,i])
+        norm_data[:,i] = norm_data[:,i] / (np.nanmax(norm_data[:,i]) - min_val[i])   
+        
+    # Return norm_parameters for renormalization
+    norm_parameters = {'min_val': min_val,
+                        'max_val': max_val}
+    norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
+
+  else:
+    min_val = parameters['min_val']
+    max_val = parameters['max_val']
+
+    # For each dimension
+    for i in range(nbr_of_num_cols):
+        norm_data[:,i] = norm_data[:,i] - min_val[i]
+        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])  
+    
+    norm_parameters = parameters 
+    norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
+
+  return norm_data_pd, norm_parameters
 
 def rmse_num_loss(ori_data, imputed_data, data_m, data_name, norm_params):
   '''Compute RMSE loss between ori_data and imputed_data for numerical variables
