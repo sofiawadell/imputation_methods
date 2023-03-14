@@ -29,28 +29,6 @@ def run_mf(data_name, miss_rate):
 
     return train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test, norm_params  
 
-
-def run_MICE(data_name, miss_rate):
-
-    # Load data without, introduce missingness & dummy encode 
-    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor(data_name, miss_rate) 
-    
-    # Define mask matrix 
-    mask_train = 1-np.isnan(train_miss_data_x)
-    mask_test = 1-np.isnan(test_miss_data_x) 
-
-    # Normalize the numerical values of all data sets 
-    data = [train_data_x,train_miss_data_x, test_data_x, test_miss_data_x]
-    train_data_norm_x, train_miss_data_norm_x, test_data_norm_x, test_miss_data_norm_x = [normalization(d,data_name,norm_params) for d in data]
-    
-    # Transform using MICE
-    test_imputed_norm_data_x, train_imputed_norm_data_x = mice_impute(train_miss_data_x, test_miss_data_x)
-
-    # Renormalize data sets
-
-    return train_data_norm_x, train_imputed_norm_data_x, test_data_norm_x, test_imputed_norm_data_x, mask_train, mask_test, norm_params 
-
-
 def run_kNN(data_name, miss_rate, best_k):
     
     # Optimize knn parameters (if not already done)

@@ -20,8 +20,6 @@ def main (data_name, miss_rate, method, best_k = None):
     # Choose method for imputation
     if method == "missForest": # Impute missing data for test and training data for MissForest
         train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_mf(data_name, miss_rate)
-    elif method == "MICE": # Impute using MICE 
-        train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_MICE(data_name, miss_rate)
     elif method == "kNN": # Impute using kNN 
         train_data_x, train_imputed_data_x, test_data_x, test_imputed_data_x, mask_train, mask_test = run_kNN(data_name, miss_rate, best_k)
     elif method == "median/mode":
@@ -43,5 +41,6 @@ def main (data_name, miss_rate, method, best_k = None):
 
     return pd.DataFrame(train_imputed_data_x), rmse_num, rmse_cat, pfc_categorical
 
+# Run main code for kNN, missForest and median/mode imputation
 train_imputed_data_x, rmse_num, rmse_cat, pfc_categorical = main("credit", 0.1, "kNN")
 
