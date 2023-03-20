@@ -1,4 +1,4 @@
-from data_loader import data_loader_ohe
+from data_loader import data_loader_factor_wo_target
 from sklearn.impute import KNNImputer
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score, KFold

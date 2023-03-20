@@ -1,6 +1,8 @@
 import numpy as np
+
 from data_loader import data_loader_factor_wo_target
-from data_loader import data_loader_mice_imputed_data
+from data_loader import data_loader_norm_mice_imputed_data
+
 from utils import normalize_numeric
 from utils import renormalize_numeric
 from utils import rmse_num_loss
@@ -10,8 +12,8 @@ from utils import pfc
 
 # Parameters to adjust
 data_name = "bank"
-miss_rate = 0.1
-state = "before imputation"
+miss_rate = 0.3
+state = "after imputation"
 
 def before_imputation(data_name, miss_rate):
     # Load factor encoded data without target column 
@@ -35,7 +37,7 @@ def after_imputation(norm_params, data_name, miss_rate, mask_train, mask_test):
     norm_params_train_miss_data = norm_params
 
     # Import data from R 
-    train_imp_norm_data_x, test_imp_norm_data_x = data_loader_mice_imputed_data(data_name, miss_rate)
+    train_imp_norm_data_x, test_imp_norm_data_x = data_loader_norm_mice_imputed_data(data_name, miss_rate)
 
     # Renormalize data using norm_params
     train_imp_data_x = renormalize_numeric(train_imp_norm_data_x, norm_params_train_miss_data, data_name)

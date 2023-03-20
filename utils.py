@@ -2,7 +2,15 @@
 import numpy as np
 import pandas as pd
 from datasets import datasets
+import sklearn
+from sklearn import metrics
+from sklearn.metrics import accuracy_score
 
+def round_categorical(train_imp_data_x,test_imp_data_x, data_name):
+  
+  return None
+
+  
 def normalization (data, parameters=None):
   '''Normalize data in [0, 1] range.
   
@@ -79,7 +87,7 @@ def normalize_numeric(data, data_name, parameters=None):
       min_val[i] = np.nanmin(norm_data[:,i])
       max_val[i] = np.nanmax(norm_data[:,i])
       norm_data[:,i] = norm_data[:,i] - min_val[i]
-      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)   
+      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])   
         
     # Return norm_parameters for renormalization
     norm_parameters = {'min_val': min_val,
@@ -94,7 +102,7 @@ def normalize_numeric(data, data_name, parameters=None):
     # For each dimension
     for i in range(nbr_of_num_cols):
         norm_data[:,i] = norm_data[:,i] - min_val[i]
-        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)  
+        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])  
     
     norm_parameters = parameters 
     norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
@@ -171,13 +179,19 @@ def rmse_num_loss(ori_data_norm, imputed_data_norm, data_m, data_name, norm_para
   # Find number of numerical columns
   N_num_cols = len(datasets[data_name]["num_cols"])
 
+  # Ensure data set is in Numpy 
+  ori_data_norm_np = ori_data_norm.values 
+  imputed_data_norm_np = imputed_data_norm.values 
+  data_m_np = data_m.values
+
   if N_num_cols == 0:
     return None
   else: 
+    
     # Extract only the numerical columns
-    ori_data_norm_num = ori_data_norm[:, :N_num_cols]
-    imputed_data_norm_num = imputed_data_norm[:, :N_num_cols]
-    data_m_num = data_m[:, :N_num_cols]
+    ori_data_norm_num = ori_data_norm_np[:, :N_num_cols]
+    imputed_data_norm_num = imputed_data_norm_np[:, :N_num_cols]
+    data_m_num = data_m_np[:, :N_num_cols]
     
     # Calculate RMSE numerical   
     nominator = np.sum(((1-data_m_num) * ori_data_norm_num - (1-data_m_num) * imputed_data_norm_num)**2)
@@ -203,13 +217,19 @@ def rmse_cat_loss(ori_data, imputed_data, data_m, data_name):
   N_num_cols = len(datasets[data_name]["num_cols"])   # Find number of numerical columns
   N_cat_cols = len(datasets[data_name]["cat_cols"])   # Find number of categorical columns
   
+  # Ensure data set is in Numpy 
+  ori_data_np = ori_data.values 
+  imputed_data_np = imputed_data.values 
+  data_m_np = data_m.values
+
   if N_cat_cols == 0:
     return None
   else:
+
     # Extract only the categorical columns
-    ori_data_cat = ori_data[:, N_num_cols:]
-    imputed_data_cat = imputed_data[:, N_num_cols:]
-    data_m_cat = data_m[:, N_num_cols:]
+    ori_data_cat = ori_data_np[:, N_num_cols:]
+    imputed_data_cat = imputed_data_np[:, N_num_cols:]
+    data_m_cat = data_m_np[:, N_num_cols:]
     
     # RMSE categorical  
     nominator = np.sum(((1-data_m_cat) * ori_data_cat - (1-data_m_cat) * imputed_data_cat)**2)
@@ -255,13 +275,18 @@ def pfc(ori_data, imputed_data, data_m, data_name): # No taking into considerati
   N_num_cols = len(datasets[data_name]["num_cols"])   # Find number of numerical columns
   N_cat_cols = len(datasets[data_name]["cat_cols"])   # Find number of categorical columns
   
+  # Ensure data set is in Numpy 
+  ori_data_np = ori_data.values 
+  imputed_data_np = imputed_data.values 
+  data_m_np = data_m.values
+
   if N_cat_cols == 0:
     return None
   else: 
     # Extract only the categorical columns
-    ori_data_cat = ori_data[:, N_num_cols:]
-    imputed_data_cat = imputed_data[:, N_num_cols:]
-    data_m_cat = data_m[:, N_num_cols:]
+    ori_data_cat = ori_data_np[:, N_num_cols:]
+    imputed_data_cat = imputed_data_np[:, N_num_cols:]
+    data_m_cat = data_m_np[:, N_num_cols:]
 
     data_m_bool = ~data_m_cat.astype(bool) # True indicates missing value (=0), False indicates non-missing value (=1)
 

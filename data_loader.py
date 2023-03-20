@@ -64,30 +64,30 @@ def data_loader(data_name, miss_rate):
 
 
 
-def data_loader_ohe(data_name, miss_rate):
+def data_loader_ohe_wo_target(data_name, miss_rate):
     missingness_str = str(int(miss_rate*100))
 
     ## Load training data
     if data_name in datasets.keys():
-        train_data_x = pd.read_csv('one_hot_train_data/one_hot_'+data_name+'_train.csv')    
+        train_data_x = pd.read_csv('one_hot_train_data_wo_target/one_hot_'+data_name+'_train.csv')    
     else:
         ValueError("Dataset not found")
     
     # Load train missing data with correct missingness
     if data_name in datasets.keys():   
-        train_miss_data_x = pd.read_csv('one_hot_train_data/one_hot_'+data_name+'_train_'+missingness_str+'.csv')
+        train_miss_data_x = pd.read_csv('one_hot_train_data_wo_target/one_hot_'+data_name+'_train_'+missingness_str+'.csv')
     else:
         ValueError("Dataset not found")
 
     ## Load test data
     if data_name in datasets.keys():
-        test_data_x = pd.read_csv('one_hot_test_data/one_hot_'+data_name+'_test.csv') 
+        test_data_x = pd.read_csv('one_hot_test_data_wo_target/one_hot_'+data_name+'_test.csv') 
     else:
         ValueError("Dataset not found")
 
     # Load test missing data with correct missingness
     if data_name in datasets.keys():   
-        test_miss_data_x = pd.read_csv('one_hot_test_data/one_hot_'+data_name+'_test_'+missingness_str+'.csv') 
+        test_miss_data_x = pd.read_csv('one_hot_test_data_wo_target/one_hot_'+data_name+'_test_'+missingness_str+'.csv') 
     else:
         ValueError("Dataset not found")
         
@@ -155,20 +155,18 @@ def data_loader_factor_wo_target(data_name, miss_rate):
         
     return train_data_x, train_miss_data_x, test_data_x, test_miss_data_x    
 
-
-
-def data_loader_mice_imputed_data(data_name, miss_rate):
+def data_loader_norm_mice_imputed_data(data_name, miss_rate):
     missingness_str = str(int(miss_rate*100))
     
     # Load normalized imputed train missing data with correct missingness
     if data_name in datasets.keys():   
-        train_imp_norm_data_x = pd.read_csv('imputed_mice_train_data/norm_imputed_mice'+data_name+'_train_'+missingness_str+'.csv')
+        train_imp_norm_data_x = pd.read_csv('norm_imputed_mice_train_data/norm_imputed_mice_'+data_name+'_train_'+missingness_str+'.csv')
     else:
         ValueError("Dataset not found")
 
     # Load normalized imputed test missing data with correct missingness
     if data_name in datasets.keys():   
-        test_imp_norm_data_x = pd.read_csv('imputed_mice_test_data/norm_imputed_mice'+data_name+'_test_'+missingness_str+'.csv') 
+        test_imp_norm_data_x = pd.read_csv('norm_imputed_mice_test_data/norm_imputed_mice_'+data_name+'_test_'+missingness_str+'.csv') 
     else:
         ValueError("Dataset not found")
         
