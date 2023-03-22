@@ -1,4 +1,4 @@
-from data_loader import data_loader_factor_wo_target
+from data_loader import data_loader_ohe_wo_target
 
 from utils import normalize_numeric
 from utils import rmse_num_loss
@@ -11,40 +11,15 @@ from sklearn import metrics
 data_name = "bank"
 miss_rate = 0.1
 
-train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
+# Load OHE data
+train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_ohe_wo_target(data_name, miss_rate)
+data_to_encode = [train_data_x, train_miss_data_x, test_data_x, test_miss_data_x] 
 
-# Define mask matrix
-mask_train = 1-np.isnan(train_miss_data_x)
-mask_test = 1-np.isnan(test_miss_data_x) 
+# Find total number of columns and number of numerical columns 
+rows, dim_train = train_data_x.shape
+N_num_cols = len(datasets[data_name]["num_cols"])
 
+# Find indicies for categorical columns 
+cat_index = list(range(N_num_cols,dim_train))
 
-
-
-# # Load test non-missing data
-# train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
-
-# # Define mask matrix 
-# mask_test = 1-np.isnan(test_miss_data_x) 
-
-# # Normalize full training data and save parameters 
-# train_full_data_norm_x, norm_params_full_data_train = normalize_numeric(train_data_x, data_name)
-
-# # Normalize imputed test data and full test data sets using full training data params 
-# test_full_data_norm_x, _ = normalize_numeric(test_data_x, data_name, norm_params_full_data_train)
-# test_imp_data_norm_x, _ = normalize_numeric(test_imp_data_x, data_name, norm_params_full_data_train)
-
-# # Calculate RMSE on normalized data and numerical columns 
-# # rmse_num = rmse_num_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name, norm_params_full_data_train)
-
-# # Find numerical columns & transform to numpy 
-# test_imp_data_norm_x_np = test_imp_data_norm_x.values
-# test_full_data_norm_x_np = test_full_data_norm_x.values
-
-# num_cols = datasets[data_name]["num_cols"]
-# nbr_of_num_cols = len(num_cols)
-
-# predicted = test_imp_data_norm_x_np[:,:nbr_of_num_cols]
-# actual = test_full_data_norm_x_np[:, :nbr_of_num_cols]
-
-# rmse_num = sklearn.metrics.mean_squared_error(actual, predicted, squared=False)
-# print(rmse_num)
+print(rows)

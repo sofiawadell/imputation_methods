@@ -9,7 +9,6 @@ from run_imputation_methods import run_kNN
 from run_imputation_methods import run_median_mode
 
 from utils import normalize_numeric
-from utils import round_categorical
 from utils import rmse_num_loss
 from utils import rmse_cat_loss
 from utils import m_rmse_loss
@@ -30,17 +29,14 @@ def main (data_name, miss_rate, method, best_k = None):
         train_imp_data_x, test_imp_data_x, train_data_x, test_data_x, mask_train, mask_test  = run_median_mode(data_name, miss_rate)
     else:
         ValueError("Method not found")
-    
-    # Round categorical 
-    train_imp_data_x, test_imp_data_x = round_categorical(train_imp_data_x,test_imp_data_x)
 
     # Save renormalized imputed data 
     missingness = int(miss_rate*100)
 
-    filename_train_imp= 'imputed_missforest_train_data/imputed_{}_{}_train_{}.csv'.format(method, data_name, missingness)
+    filename_train_imp= 'imputed_{}_train_data/imputed_{}_{}_train_{}.csv'.format(method, method, data_name, missingness)
     train_imp_data_x.to_csv(filename_train_imp, index=False)
 
-    filename_test_imp = 'imputed_missforest_test_data/imputed_{}_{}_test_{}.csv'.format(method, data_name, missingness)
+    filename_test_imp = 'imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method, method, data_name, missingness)
     test_imp_data_x.to_csv(filename_test_imp, index=False)
 
     # Normalize the imputed data set using the full data set 
@@ -49,7 +45,7 @@ def main (data_name, miss_rate, method, best_k = None):
     test_imp_data_norm_x, _ = normalize_numeric(test_imp_data_x, data_name, norm_params_full_data_train)   
 
     # Calculate RMSE for numerical data
-    rmse_num = rmse_num_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name, norm_params_full_data_train)
+    rmse_num = rmse_num_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name)
 
     # Calculate RMSE for numerical and categorical data 
     rmse_cat = rmse_cat_loss(test_full_data_norm_x, test_imp_data_norm_x, mask_test, data_name)
@@ -61,7 +57,7 @@ def main (data_name, miss_rate, method, best_k = None):
     return rmse_num, m_rmse, pfc_value, rmse_cat
 
 # Run main code for kNN, missForest and median/mode imputation
-rmse_num, m_rmse, pfc_value, rmse_cat = main("bank", 0.1, "missforest")
+rmse_num, m_rmse, pfc_value, rmse_cat = main("credit", 0.1, "missforest")
 
 print(rmse_num)
 print(rmse_cat)

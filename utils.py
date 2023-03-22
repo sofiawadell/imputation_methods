@@ -6,10 +6,6 @@ import sklearn
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
 
-def round_categorical(train_imp_data_x,test_imp_data_x, data_name):
-  
-  return None
-
   
 def normalization (data, parameters=None):
   '''Normalize data in [0, 1] range.
@@ -87,7 +83,7 @@ def normalize_numeric(data, data_name, parameters=None):
       min_val[i] = np.nanmin(norm_data[:,i])
       max_val[i] = np.nanmax(norm_data[:,i])
       norm_data[:,i] = norm_data[:,i] - min_val[i]
-      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])   
+      norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)   
         
     # Return norm_parameters for renormalization
     norm_parameters = {'min_val': min_val,
@@ -102,7 +98,7 @@ def normalize_numeric(data, data_name, parameters=None):
     # For each dimension
     for i in range(nbr_of_num_cols):
         norm_data[:,i] = norm_data[:,i] - min_val[i]
-        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i])  
+        norm_data[:,i] = norm_data[:,i] / (max_val[i] - min_val[i] + 1e-6)  
     
     norm_parameters = parameters 
     norm_data_pd = pd.DataFrame(norm_data, columns=data.columns) 
@@ -164,7 +160,7 @@ def renormalize_numeric (norm_data, norm_parameters, data_name):
     
   return renorm_data_pd
 
-def rmse_num_loss(ori_data_norm, imputed_data_norm, data_m, data_name, norm_params):
+def rmse_num_loss(ori_data_norm, imputed_data_norm, data_m, data_name):
   '''Compute RMSE loss between normalized ori_data and imputed_data for numerical variables
   
   Args:

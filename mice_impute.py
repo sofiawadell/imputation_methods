@@ -1,6 +1,6 @@
 import numpy as np
 
-from data_loader import data_loader_factor_wo_target
+from data_loader import data_loader_ohe_for_mice_wo_target
 from data_loader import data_loader_norm_mice_imputed_data
 
 from utils import normalize_numeric
@@ -11,13 +11,13 @@ from utils import m_rmse_loss
 from utils import pfc
 
 # Parameters to adjust
-data_name = "bank"
-miss_rate = 0.3
-state = "after imputation"
+data_name = "news"
+miss_rate = 0.5
+state = "before imputation"
 
 def before_imputation(data_name, miss_rate):
     # Load factor encoded data without target column 
-    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
+    train_data_x, train_miss_data_x, test_data_x, test_miss_data_x = data_loader_ohe_for_mice_wo_target(data_name, miss_rate) 
 
     # Define mask matrix 
     mask_train = 1-np.isnan(train_miss_data_x)
@@ -80,10 +80,10 @@ if state == "before imputation":
 
     # Export data sets to R
     missingness = int(miss_rate*100)
-    filename_train_norm = 'norm_factor_train_data_wo_target/norm_factor_encode_{}_train_{}.csv'.format(data_name, missingness)
+    filename_train_norm = 'norm_one_hot_train_data_wo_target_for_mice/norm_one_hot_for_mice_{}_train_{}.csv'.format(data_name, missingness)
     train_miss_data_norm_x.to_csv(filename_train_norm, index=False)
 
-    filename_test_norm = 'norm_factor_test_data_wo_target/norm_factor_encode_{}_test_{}.csv'.format(data_name, missingness)
+    filename_test_norm = 'norm_one_hot_test_data_wo_target_for_mice/norm_one_hot_for_mice_{}_test_{}.csv'.format(data_name, missingness)
     test_miss_data_norm_x.to_csv(filename_test_norm, index=False)
 
 elif state == "after imputation":
