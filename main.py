@@ -1,9 +1,5 @@
 import pandas as pd
 
-from data_loader import data_loader
-from data_loader import data_loader_factor_wo_target
-from data_loader import data_loader_full
-
 from run_imputation_methods import run_mf
 from run_imputation_methods import run_kNN
 from run_imputation_methods import run_median_mode
@@ -14,11 +10,28 @@ from utils import rmse_cat_loss
 from utils import m_rmse_loss
 from utils import pfc
 
+''' Description
+
+Imputes data set using the imputation methods MissForest, kNN or median/mode imputation and prints the result
+
+'''
+
 def main (data_name, miss_rate, method, best_k = None):
 
-    # TBU: Method which ensures arguments are correct
-    data_name = data_name
-    miss_rate = miss_rate 
+    ''' Runs a chosen imputation method and evaluates the result
+  
+    Args:
+    - data_name: mushroom, letter, bank, credit or news
+    - miss_rate: the probability of missing components (0.1, 0.3 or 0.5)
+    - method: missforest, knn or median_mode 
+    
+    Returns:
+    - rmse_num: RMSE between the original and the imputed data set for the numerical variables 
+    - m_rmse: Modified RMSE between the original and the imputed data set for all variables 
+    - rmse_cat: RMSE between the original and the imputed data set for the categorical variables 
+    - pfc_value: Share of percently falsely classified imputed values for the categorical variables, when comparing to the original data
+
+    '''
     
     # Choose method for imputation
     if method == "missforest": # Impute missing data for test and training data for MissForest
@@ -33,10 +46,10 @@ def main (data_name, miss_rate, method, best_k = None):
     # Save renormalized imputed data 
     missingness = int(miss_rate*100)
 
-    filename_train_imp= 'imputed_{}_train_data/imputed_{}_{}_train_{}.csv'.format(method, method, data_name, missingness)
+    filename_train_imp= 'imputed_data/imputed_{}_train_data/imputed_{}_{}_train_{}.csv'.format(method, method, data_name, missingness)
     train_imp_data_x.to_csv(filename_train_imp, index=False)
 
-    filename_test_imp = 'imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method, method, data_name, missingness)
+    filename_test_imp = 'imputed_data/imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method, method, data_name, missingness)
     test_imp_data_x.to_csv(filename_test_imp, index=False)
 
     # Normalize the imputed data set using the full data set 
@@ -56,10 +69,12 @@ def main (data_name, miss_rate, method, best_k = None):
 
     return rmse_num, m_rmse, pfc_value, rmse_cat
 
-# Run main code for kNN, missForest and median/mode imputation
-rmse_num, m_rmse, pfc_value, rmse_cat = main("credit", 0.1, "missforest")
 
-print(rmse_num)
-print(rmse_cat)
-print(m_rmse)
-print(pfc_value)
+# Run main code for kNN, missForest and median/mode imputation
+rmse_num, m_rmse, pfc_value, rmse_cat = main("news", 0.1, "knn", 61)
+
+# Print results
+print(f"Numerical RMSE: {rmse_num}")
+print(f"Categorical RMSE: {rmse_cat}")
+print(f"Modified RMSE: {m_rmse}")
+print(f"PFC: {pfc_value}")
