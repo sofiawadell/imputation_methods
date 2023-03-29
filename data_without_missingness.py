@@ -1,0 +1,23 @@
+import pandas as pd
+from datasets import datasets
+import matplotlib.pyplot as plt
+from sdv import load_demo
+from sdv.tabular import CTGAN
+from table_evaluator import TableEvaluator
+
+all_datasets = ["mushroom", "news", "credit", "letter", "bank"]
+all_datasets = ["news"]
+all_missingness = [10, 30, 50]
+all_missingness = [10]
+
+for data_name in all_datasets:
+    for missingness in all_missingness:
+        filename_missing_data = 'ohe_preprocessed_data/one_hot_test_data_wo_target/one_hot_{}_test_{}.csv'.format(,data_name, miss_rate)
+        missing_data_wo_target = pd.read_csv(filename_missing_data)
+
+        # Remove out rows with missing values and save to a new DataFrame
+        data_no_nans = missing_data_wo_target.dropna()
+
+        # Save data where rows with missingness have been removed 
+        filename = '{}{}_{}_{}.csv'.format('train_data_wo_target_extra_50/', data_name, 'train', missingness)
+        concatenated_data_50.to_csv(filename, index=False)
