@@ -20,8 +20,8 @@ Prepares a data set with missingness for imputation in R using MICE. Evaluates t
 '''
 
 # Parameters to adjust
-data_name = "news"
-miss_rate = 0.1
+data_name = "credit"
+miss_rate = 0.5
 state = "after imputation"
 
 def before_imputation(data_name, miss_rate):
@@ -132,10 +132,10 @@ elif state == "after imputation":
     rmse_num, rmse_cat, m_rmse, pfc_value = after_imputation(train_factor_data_x, test_factor_data_x, norm_params_train_miss_data, data_name, miss_rate)
 
     # Print
-    print(rmse_num)
-    print(rmse_cat)
-    print(m_rmse)
-    print(pfc_value)
+    print(f"Numerical RMSE: {rmse_num}")
+    print(f"Categorical RMSE: {rmse_cat}")
+    print(f"Modified RMSE: {m_rmse}")
+    print(f"PFC: {pfc_value}")
 
 else:
     ValueError("State must be either 'before imputation' or 'after imputation'")

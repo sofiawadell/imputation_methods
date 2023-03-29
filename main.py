@@ -71,7 +71,7 @@ def main (data_name, miss_rate, method, best_k = None):
 
 
 # Run main code for kNN, missForest and median/mode imputation
-rmse_num, m_rmse, pfc_value, rmse_cat = main("news", 0.1, "knn", 61)
+rmse_num, m_rmse, pfc_value, rmse_cat = main("credit", 0.5, "missforest")
 
 # Print results
 print(f"Numerical RMSE: {rmse_num}")
