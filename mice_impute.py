@@ -20,8 +20,8 @@ Prepares a data set with missingness for imputation in R using MICE. Evaluates t
 '''
 
 # Parameters to adjust
-data_name = "credit"
-miss_rate = 0.5
+data_name = "news"
+miss_rate = 0.1
 state = "after imputation"
 
 def before_imputation(data_name, miss_rate):
