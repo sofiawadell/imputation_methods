@@ -14,8 +14,8 @@ from datasets import datasets
 import matplotlib.pyplot as plt
 
 # all_datasets = ["letter", "mushroom", "bank", "credit"]
-all_datasets = ["letter"]
-all_missingness = [10]
+all_datasets = ["credit"]
+all_missingness = [50]
 
 def linearRegression(X_train, X_test, y_train, y_test):
     # Create a LinearRegression object
@@ -76,7 +76,7 @@ def main(method):
 
     for data_name in all_datasets:
        for miss_rate in all_missingness:
-            filename_imputed_data = 'imputed_data/imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method,method,data_name, miss_rate)
+            filename_imputed_data = 'imputed_data/no_ctgan/imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method,method,data_name, miss_rate)
             imputed_data_wo_target = pd.read_csv(filename_imputed_data)
 
             filename_original_data = 'ohe_preprocessed_data/one_hot_test_data/one_hot_{}_test.csv'.format(data_name)
@@ -99,7 +99,7 @@ def main(method):
     return results
 
 if __name__ == '__main__':
-  method = "mice"    
+  method = "missforest"    
   results = main(method)
   for item in results:
     print('Dataset:', item['dataset'])

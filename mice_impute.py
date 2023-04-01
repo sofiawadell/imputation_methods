@@ -3,6 +3,8 @@ import numpy as np
 from data_loader import data_loader_ohe_wo_target
 from data_loader import data_loader_norm_factor_mice_imputed_data
 from data_loader import data_loader_factor_wo_target
+from data_loader import data_loader_factor_wo_target_ctgan50
+from data_loader import data_loader_factor_wo_target_ctgan100
 
 from factor_encode_to_ohe import factor_encode_to_ohe
 
@@ -20,17 +22,22 @@ Prepares a data set with missingness for imputation in R using MICE. Evaluates t
 '''
 
 # Parameters to adjust
-data_name = "news"
+data_name = "letter"
 miss_rate = 0.1
-state = "after imputation"
+ctgan = "50"
+state = "before imputation"
 
-def before_imputation(data_name, miss_rate):
+def before_imputation(data_name, miss_rate, ctgan):
     ''' Prepares a data set with missing values for imputation using MICE in R. 
     Loads factor encoded data set without target cariable, normalizes the train and test data using parameters from the train data set.
   
     Args:
     - data_name: mushroom, letter, bank, credit or news
     - miss_rate: the probability of missing components (0.1, 0.3 or 0.5)
+    - ctgan: '50', '100' or None, determines if ctgan increased training data should be used or not.
+        "50": Training data is increased by 50%
+        "100": Training data is increased by 100% 
+        "": CTGAN is not used for increasing training data
     
     Returns:
     - train_miss_factor_data_norm_x: Normalized factor encoded train data set with missing values
@@ -40,8 +47,13 @@ def before_imputation(data_name, miss_rate):
     - norm_params_train_miss_data: Normalizing parameters from train data set with missing values, which have been used to normalize the train and test data set with missing values 
     '''
 
-    # Load factor encoded data without target column 
-    train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
+    # Load factor encoded data without target column
+    if ctgan == "50":
+        train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x = data_loader_factor_wo_target_ctgan50(data_name, miss_rate) 
+    elif ctgan == "100":
+        train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x = data_loader_factor_wo_target_ctgan100(data_name, miss_rate) 
+    else:
+        train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x = data_loader_factor_wo_target(data_name, miss_rate) 
 
     # Normalize training missing data 
     train_miss_factor_data_norm_x, norm_params_train_miss_data = normalize_numeric(train_factor_miss_data_x, data_name)
@@ -80,10 +92,10 @@ def after_imputation(train_factor_data_x, test_factor_data_x, norm_params_train_
     # Save renormalized imputed data 
     missingness = int(miss_rate*100)
 
-    filename_train_imp_mice = 'imputed_data/imputed_mice_train_data/imputed_mice_{}_train_{}.csv'.format(data_name, missingness)
+    filename_train_imp_mice = 'imputed_data/no_ctgan/imputed_mice_train_data/imputed_mice_{}_train_{}.csv'.format(data_name, missingness)
     train_imp_ohe_data_x.to_csv(filename_train_imp_mice, index=False)
 
-    filename_test_imp_mice = 'imputed_data/imputed_mice_test_data/imputed_mice_{}_test_{}.csv'.format(data_name, missingness)
+    filename_test_imp_mice = 'imputed_data/no_ctgan/imputed_mice_test_data/imputed_mice_{}_test_{}.csv'.format(data_name, missingness)
     test_imp_ohe_data_x.to_csv(filename_test_imp_mice, index=False)
 
     # Load full OHE training and testing data sets
@@ -114,15 +126,22 @@ def after_imputation(train_factor_data_x, test_factor_data_x, norm_params_train_
 
 if state == "before imputation":
     # Run before_imputation to get normalized factor encoded data 
-    train_miss_factor_data_norm_x, test_miss_factor_data_norm_x, train_factor_data_x, test_factor_data_x, norm_params_train_miss_data = before_imputation(data_name, miss_rate)
+    train_miss_factor_data_norm_x, test_miss_factor_data_norm_x, train_factor_data_x, test_factor_data_x, norm_params_train_miss_data = before_imputation(data_name, miss_rate, ctgan)
 
     # Export normalized factor data sets to R
     missingness = int(miss_rate*100)
-    filename_train_norm = 'factor_preprocessed_data/norm_factor_train_data_wo_target_for_mice/norm_factor_for_mice_{}_train_{}.csv'.format(data_name, missingness)
-    train_miss_factor_data_norm_x.to_csv(filename_train_norm, index=False)
+    if ctgan == "":
+        filename_train_norm = 'factor_preprocessed_data/data_for_mice/norm_factor_train_data_wo_target_for_mice/norm_factor_for_mice_{}_train_{}.csv'.format(data_name, missingness)
+        train_miss_factor_data_norm_x.to_csv(filename_train_norm, index=False)
 
-    filename_test_norm = 'factor_preprocessed_data/norm_factor_test_data_wo_target_for_mice/norm_factor_for_mice_{}_test_{}.csv'.format(data_name, missingness)
-    test_miss_factor_data_norm_x.to_csv(filename_test_norm, index=False)
+        filename_test_norm = 'factor_preprocessed_data/data_for_mice/norm_factor_test_data_wo_target_for_mice/norm_factor_for_mice_{}_test_{}.csv'.format(data_name, missingness)
+        test_miss_factor_data_norm_x.to_csv(filename_test_norm, index=False)
+    else:
+        filename_train_norm = 'factor_preprocessed_data/data_for_mice/norm_factor_train_data_wo_target_for_mice_ctgan{}/norm_factor_for_mice_{}_train_{}_ctgan{}.csv'.format(ctgan,data_name, missingness, ctgan)
+        train_miss_factor_data_norm_x.to_csv(filename_train_norm, index=False)
+
+        filename_test_norm = 'factor_preprocessed_data/data_for_mice/norm_factor_test_data_wo_target_for_mice_ctgan{}/norm_factor_for_mice_{}_test_{}_ctgan{}.csv'.format(ctgan,data_name, missingness, ctgan)
+        test_miss_factor_data_norm_x.to_csv(filename_test_norm, index=False)
 
 elif state == "after imputation":
     # Find mask matrix and norm parameters 
