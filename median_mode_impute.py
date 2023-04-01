@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import time
 
-def median_mode_impute(train_factor_miss_norm_data_x, test_factor_miss_norm_data_x, train_data_x, test_data_x, data_name):
+def median_mode_impute(train_factor_miss_norm_data_x, test_factor_miss_norm_data_x, train_factor_data_x, test_factor_data_x, data_name):
 
     ''' Imputes a data set with missing values using median imputation for the numerical variables and mode imputation for the categorical variables. Prints the elapsed time of the imputation.
   
@@ -58,6 +58,6 @@ def median_mode_impute(train_factor_miss_norm_data_x, test_factor_miss_norm_data
     print(f"Elapsed time: {elapsed_time} seconds")
 
     # OHE data
-    train_imputed_norm_ohe_data_x, test_imputed_norm_ohe_data_x = factor_encode_to_ohe(train_imputed_norm_data_x, test_imputed_norm_data_x, train_data_x, test_data_x, data_name)
+    train_imputed_norm_ohe_data_x, test_imputed_norm_ohe_data_x = factor_encode_to_ohe(train_imputed_norm_data_x, test_imputed_norm_data_x, train_factor_data_x, test_factor_data_x, data_name)
     
     return train_imputed_norm_ohe_data_x, test_imputed_norm_ohe_data_x
