@@ -454,3 +454,37 @@ def data_loader_factor_wo_target_ctgan100(data_name, miss_rate):
         ValueError("Dataset not found")
         
     return train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x 
+
+def data_loader_norm_factor_mice_imputed_data_ctgan(data_name, miss_rate, ctgan):
+    '''Loads normalized training and test datasets where the categorical columns are factor encoded (also known as label encoded), and where the target variable is removed, that have been imputed using MICE method. 
+    The training data have been increased using ctgan.
+  
+    Args:
+    - data_name: mushroom, letter, bank, credit or news
+    - miss_rate: the probability of missing components (0.1, 0.3 or 0.5) before the data was imputed with MICE
+    - ctgan: '50', '100' or None, determines how much % the training data is increased with
+        "50": Training data is increased by 50%
+        "100": Training data is increased by 100% 
+    
+    Returns:
+    - train_imp_factor_norm_data_x: normalized MICE imputed training data 
+    - test_imp_factor_norm_data_x: normalized MICE imputed test data 
+
+    '''
+
+    # Define missingness in percentages
+    missingness_str = str(int(miss_rate*100))
+    
+    # Load normalized MICE imputed train missing data
+    if data_name in datasets.keys():   
+        train_imp_factor_norm_data_x = pd.read_csv('imputed_data/ctgan'+ctgan+'/norm_factor_imputed_mice_train_data_ctgan'+ctgan+'/norm_factor_imputed_mice_'+data_name+'_train_'+missingness_str+'_ctgan'+ctgan+'.csv')
+    else:
+        ValueError("Dataset not found")
+
+    # Load normalized MICE imputed test missing data 
+    if data_name in datasets.keys():   
+        test_imp_factor_norm_data_x = pd.read_csv('imputed_data/ctgan'+ctgan+'/norm_factor_imputed_mice_test_data_ctgan'+ctgan+'/norm_factor_imputed_mice_'+data_name+'_test_'+missingness_str+'_ctgan'+ctgan+'.csv')
+    else:
+        ValueError("Dataset not found")
+        
+    return train_imp_factor_norm_data_x, test_imp_factor_norm_data_x

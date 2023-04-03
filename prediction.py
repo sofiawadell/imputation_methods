@@ -14,8 +14,8 @@ from datasets import datasets
 import matplotlib.pyplot as plt
 
 # all_datasets = ["letter", "mushroom", "bank", "credit"]
-all_datasets = ["credit"]
-all_missingness = [50]
+all_datasets = ["news"]
+all_missingness = [30]
 
 def linearRegression(X_train, X_test, y_train, y_test):
     # Create a LinearRegression object
@@ -99,7 +99,7 @@ def main(method):
     return results
 
 if __name__ == '__main__':
-  method = "missforest"    
+  method = "mice"    
   results = main(method)
   for item in results:
     print('Dataset:', item['dataset'])

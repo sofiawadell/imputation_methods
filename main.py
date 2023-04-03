@@ -52,10 +52,10 @@ def main (data_name, miss_rate, method, ctgan, best_k = None):
 
     # Save imputed data based on ctgan variable 
     if ctgan == "50":
-        filename_test_imp_ctgan50 = 'imputed_data/ctgan50/ctgan50_imputed_{}_test_data/imputed_{}_{}_test_{}_ctgan50.csv'.format(method, method, data_name, missingness)
+        filename_test_imp_ctgan50 = 'imputed_data/ctgan50/imputed_{}_test_data/imputed_{}_{}_test_{}_ctgan50.csv'.format(method, method, data_name, missingness)
         test_imp_data_x.to_csv(filename_test_imp_ctgan50, index=False)
     elif ctgan == "100":
-        filename_test_imp_ctgan100 = 'imputed_data/ctgan100/ctgan100_imputed_{}_test_data/imputed_{}_{}_test_{}_ctgan100.csv'.format(method, method, data_name, missingness)
+        filename_test_imp_ctgan100 = 'imputed_data/ctgan100/imputed_{}_test_data/imputed_{}_{}_test_{}_ctgan100.csv'.format(method, method, data_name, missingness)
         test_imp_data_x.to_csv(filename_test_imp_ctgan100, index=False)
     else: 
         filename_train_imp = 'imputed_data/no_ctgan/imputed_{}_train_data/imputed_{}_{}_train_{}.csv'.format(method, method, data_name, missingness)
