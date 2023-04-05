@@ -363,6 +363,38 @@ def data_loader_ohe_wo_target_ctgan100(data_name, miss_rate):
         
     return train_ohe_data_x, train_ohe_miss_data_x, test_ohe_data_x, test_ohe_miss_data_x
 
+def data_loader_ohe_wo_target_ctgan_for_knn(data_name, miss_rate, ctgan):
+
+    '''Loads training and test datasets where the categorical columns are one hot encoded and the target column is removed, with and without missingness. 
+    The train data with missing values have been increased with 100% using CTGAN
+  
+    Args:
+    - data_name: mushroom, letter, bank, credit or news
+    - miss_rate: the probability of missing components (0.1, 0.3 or 0.5)
+    
+    Returns:
+    train_ohe_data_x: one hot encoded original data without target column where the data amount has been increased using ctgan
+    train_ohe_miss_data_x: one hot encoded data with missing values without target column where the data amount has been increased % using ctgan
+
+    '''
+
+    # Define missingness in percentages      
+    missingness_str = str(int(miss_rate*100))
+
+    ## Load training data
+    if data_name in datasets.keys():
+        train_ohe_data_x = pd.read_csv('ohe_preprocessed_data/one_hot_train_data_wo_target_extra_'+ctgan+'/one_hot_'+data_name+'_train_full'+missingness_str+'_extra_'+ctgan+'.csv')
+    else:
+        ValueError("Dataset not found")
+    
+    # Load train missing data with missingness
+    if data_name in datasets.keys():   
+        train_ohe_miss_data_x = pd.read_csv('ohe_preprocessed_data/one_hot_train_data_wo_target_extra_'+ctgan+'/one_hot_'+data_name+'_train_'+missingness_str+'_extra_'+ctgan+'.csv')
+    else:
+        ValueError("Dataset not found")
+        
+    return train_ohe_data_x, train_ohe_miss_data_x
+
 def data_loader_factor_wo_target_ctgan50(data_name, miss_rate):
 
     '''Loads training and test datasets where the categorical columns are factor (also known as label) encoded and where the target variable is removed, with and without missingness.

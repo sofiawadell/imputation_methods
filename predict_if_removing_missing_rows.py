@@ -7,8 +7,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelBinarizer, StandardScaler
 from sklearn.linear_model import LinearRegression
 
-import warnings
-warnings.simplefilter(action='ignore', category=Warning)
+# import warnings
+# warnings.simplefilter(action='ignore', category=Warning)
 
 from datasets import datasets
 import matplotlib.pyplot as plt

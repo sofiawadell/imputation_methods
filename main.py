@@ -24,10 +24,10 @@ def main (data_name, miss_rate, method, ctgan, best_k = None):
     - data_name: mushroom, letter, bank, credit or news
     - miss_rate: the probability of missing components (0.1, 0.3 or 0.5)
     - method: missforest, knn or median_mode
-    - ctgan: '50', '100' or None, determines if ctgan increased training data should be used or not.
+    - ctgan: '50', '100' or "", determines if ctgan increased training data should be used or not.
         "50": Training data is increased by 50%
         "100": Training data is increased by 100% 
-        None. CTGAN is not used for increasing training data
+        "". CTGAN is not used for increasing training data
     
     Returns:
     - rmse_num: RMSE between the original and the imputed data set for the numerical variables 
@@ -83,16 +83,18 @@ def main (data_name, miss_rate, method, ctgan, best_k = None):
 
 
 # Run main code for kNN, missForest and median/mode imputation
-miss = [0.1, 0.3]
-# dat =["mushroom", "letter", "bank"]
-dat = ["credit"]
-ctgan = ["50","100"]
+miss = [0.1]
+# dat =["mushroom", "letter", "bank", "credit"]
+# dat =["mushroom", "letter"]
+dat = ["news"]
+ctgan = ["50"]
 for m in miss:
     for c in ctgan:
-        rmse_num, m_rmse, pfc_value, rmse_cat = main("credit", m, "missforest", c)
-        # Print results
-        print(f"Dataset: credit, Missingness: {int(m*100)}%, ctgan: {c}%")
-        print(f"Numerical RMSE: {rmse_num}")
-        print(f"Categorical RMSE: {rmse_cat}")
-        print(f"Modified RMSE: {m_rmse}")
-        print(f"PFC: {pfc_value}")
+        for d in dat:
+            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "knn", c, 27)
+            # Print results
+            print(f"Dataset: {d}, Missingness: {int(m*100)}%, ctgan: {c}%")
+            print(f"Numerical RMSE: {rmse_num}")
+            print(f"Categorical RMSE: {rmse_cat}")
+            print(f"Modified RMSE: {m_rmse}")
+            print(f"PFC: {pfc_value}")
