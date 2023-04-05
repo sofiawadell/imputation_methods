@@ -13,9 +13,9 @@ warnings.simplefilter(action='ignore', category=Warning)
 from datasets import datasets
 import matplotlib.pyplot as plt
 
-# all_datasets = ["letter", "mushroom", "bank", "credit"]
-all_datasets = ["news"]
-all_missingness = [30]
+all_datasets = ["mushroom", "letter", "bank", "credit"]
+# all_datasets = ["news"]
+all_missingness = [10]
 
 def linearRegression(X_train, X_test, y_train, y_test):
     # Create a LinearRegression object
@@ -71,17 +71,22 @@ def kNeighborsClassifier(X, y, X_train, X_test, y_train, y_test):
 
     return accuracy, auroc
 
-def main(method):
+def main(method, ctgan):
     results = []
 
     for data_name in all_datasets:
        for miss_rate in all_missingness:
-            filename_imputed_data = 'imputed_data/no_ctgan/imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method,method,data_name, miss_rate)
-            imputed_data_wo_target = pd.read_csv(filename_imputed_data)
-
+            if ctgan == "":
+                filename_imputed_data = 'imputed_data/no_ctgan/imputed_{}_test_data/imputed_{}_{}_test_{}.csv'.format(method,method,data_name, miss_rate)
+                imputed_data_wo_target = pd.read_csv(filename_imputed_data)
+            else:
+                filename_imputed_data = 'imputed_data/ctgan{}/imputed_{}_test_data/imputed_{}_{}_test_{}_ctgan{}.csv'.format(ctgan,method,method,data_name, miss_rate, ctgan)
+                imputed_data_wo_target = pd.read_csv(filename_imputed_data)
+            
+            # Load original data to extract target column 
             filename_original_data = 'ohe_preprocessed_data/one_hot_test_data/one_hot_{}_test.csv'.format(data_name)
             original_data = pd.read_csv(filename_original_data)
-
+            
             # Split the data into features (X) and target (y)
             X = imputed_data_wo_target
             y = original_data[datasets[data_name]["target"]]
@@ -95,13 +100,16 @@ def main(method):
             elif datasets[data_name]["classification"]["model"] == LinearRegression:
                 mse = linearRegression(X_train, X_test, y_train, y_test)
                 results.append({'dataset': data_name + str(miss_rate), 'scores':{'mse': str(mse)}})
-            print(f"{data_name} with {miss_rate}% missingness, predicted")
+            print(f"{data_name} with {miss_rate}% missingness & ctgan: {ctgan}% predicted")
+
     return results
 
 if __name__ == '__main__':
-  method = "mice"    
-  results = main(method)
-  for item in results:
+  method = "missforest"
+  ctgan = "100"    
+  results = main(method, ctgan)
+  print('Method: ', method)
+  for item in results:    
     print('Dataset:', item['dataset'])
     print('Scores:', item['scores'])
 
