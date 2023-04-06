@@ -26,7 +26,7 @@ Prepares a data set with missingness for imputation in R using MICE. Evaluates t
 
 #### Parameters to adjust
 data_name = "letter" # "mushroom", "letter", "bank", "credit" or "news"
-miss_rate = 0.1 # 0.1, 0.3 or 0.5
+miss_rate = 0.3 # 0.1, 0.3 or 0.5
 ctgan = "100"   #"50", "100" or ""
 state = "after imputation" #"before imputation" or "after imputation"
 
