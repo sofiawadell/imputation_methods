@@ -17,12 +17,4 @@ from utils import pfc
 import time
 from sklearn.impute import KNNImputer
 
-data_name = "bank"
-miss_rate = 0.1
-
-train_factor_data_x, train_factor_miss_data_x, test_factor_data_x, test_factor_miss_data_x = data_loader_factor_wo_target_ctgan50(data_name, miss_rate) 
-train_data_ohe_x, train_ohe_miss_data_x, test_data_ohe_x, test_ohe_miss_data_x = data_loader_ohe_wo_target_ctgan50(data_name, miss_rate) 
-
-# Define mask matrix using OHE data
-mask_train = 1-np.isnan(train_ohe_miss_data_x)
-mask_test = 1-np.isnan(test_ohe_miss_data_x) 
+print("hi")

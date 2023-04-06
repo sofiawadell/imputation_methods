@@ -19,11 +19,11 @@ Determines the optimal number of neighbors for kNNImputer for a specific a data 
 '''
 
 # Input parameters
-data_name = "bank" 
+data_name = "news" 
 #k_values = range(5,15)
 ctgan = "100"
 k_values = []
-for i in range(16,25):
+for i in range(22,32):
     k_values.append(i*1)
 
 def calculate_RMSE(data_name, miss_rate, k, ctgan):
