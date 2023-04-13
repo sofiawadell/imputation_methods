@@ -86,12 +86,12 @@ def main (data_name, miss_rate, method, ctgan, best_k = None):
 miss = [0.1]
 # dat =["mushroom", "letter", "bank", "credit"]
 # dat =["mushroom", "letter"]
-dat = ["news"]
-ctgan = ["100"]
+dat = ["letter"]
+ctgan = [""]
 for m in miss:
     for c in ctgan:
         for d in dat:
-            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "knn", c, 24)
+            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "knn", c, 18)
             # Print results
             print(f"Dataset: {d}, Missingness: {int(m*100)}%, ctgan: {c}%")
             print(f"Numerical RMSE: {rmse_num}")

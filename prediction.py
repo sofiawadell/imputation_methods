@@ -13,8 +13,8 @@ warnings.simplefilter(action='ignore', category=Warning)
 from datasets import datasets
 import matplotlib.pyplot as plt
 
-all_datasets = ["mushroom", "letter", "bank", "credit"]
-# all_datasets = ["news"]
+#all_datasets = ["mushroom", "letter", "bank"]
+all_datasets = ["bank"]
 all_missingness = [10]
 
 def linearRegression(X_train, X_test, y_train, y_test):
@@ -106,7 +106,7 @@ def main(method, ctgan):
 
 if __name__ == '__main__':
   method = "missforest"
-  ctgan = "100"    
+  ctgan = "50"    
   results = main(method, ctgan)
   print('Method: ', method)
   for item in results:    
