@@ -297,3 +297,33 @@ def rounding_discrete(imputed_data, data_x, data_name):
       row += 1
         
   return rounded_data
+
+def find_average_and_st_dev(values):
+  '''Finding the average and standard deviation along a vector of values.
+  
+  Args:
+    - values: vector of values
+    
+  Returns:
+    - average_value
+    - st_dev
+  '''
+  if all(x is None for x in values):
+    return None, None
+  
+  average_value = np.mean(values)
+  st_dev = np.std(values)
+
+  return average_value, st_dev
+
+def round_if_not_none(x):
+    '''Round if not none
+    
+    Args:
+      - x: value
+      
+    Returns:
+      - rounded_value'''
+    if x is not None:
+        return round(x, 4)
+    return None

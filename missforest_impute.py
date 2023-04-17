@@ -45,7 +45,7 @@ def missforest_impute(train_miss_norm_data_x, test_miss_norm_data_x, data_name):
     start_time = time.time()
 
     # Create a MissForest model and train it - no tuning required 
-    imputer = MissForest(random_state = 0, verbose = 0)    
+    imputer = MissForest(verbose = 0)    
     tmp = imputer.fit(train_miss_norm_data_x, cat_vars = cat_index)
     train_imp_norm_data_x = tmp.transform(train_miss_norm_data_x)
 
