@@ -91,7 +91,7 @@ ctgan = [""]
 for m in miss:
     for c in ctgan:
         for d in dat:
-            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "knn", c, 18)
+            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "missforest", c)
             # Print results
             print(f"Dataset: {d}, Missingness: {int(m*100)}%, ctgan: {c}%")
             print(f"Numerical RMSE: {rmse_num}")
