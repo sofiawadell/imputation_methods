@@ -83,15 +83,15 @@ def main (data_name, miss_rate, method, ctgan, best_k = None):
 
 
 # Run main code for kNN, missForest and median/mode imputation
-miss = [0.1]
+miss = [0.1, 0.3, 0.5]
 # dat =["mushroom", "letter", "bank", "credit"]
 # dat =["mushroom", "letter"]
 dat = ["letter"]
-ctgan = [""]
+ctgan = ["", "50"]
 for m in miss:
     for c in ctgan:
         for d in dat:
-            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "missforest", c)
+            rmse_num, m_rmse, pfc_value, rmse_cat = main(d, m, "knn", c)
             # Print results
             print(f"Dataset: {d}, Missingness: {int(m*100)}%, ctgan: {c}%")
             print(f"Numerical RMSE: {rmse_num}")

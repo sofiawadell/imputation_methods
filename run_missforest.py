@@ -17,7 +17,7 @@ from utils import rmse_num_loss
 from utils import rmse_cat_loss
 from utils import m_rmse_loss
 from utils import pfc
-from utils import find_average_and_st_dev
+from utils import find_average_and_st_dev<
 from utils import round_if_not_none
 
 import time
@@ -122,7 +122,7 @@ def run_missforest(data_name, miss_rate, ctgan, no_of_runs):
 miss = [0.1, 0.3]
 dat =["mushroom", "letter", "bank", "credit", "news"]
 ctgan = ["50", "100"]
-no_of_runs = 7
+no_of_runs = 10
 
 df_results = pd.DataFrame(columns=['Dataset', 'Missing%', 'Additional CTGAN data%', 'Average mRMSE',
                     'St Dev mRMSE', 'Average RMSE num', 'St Dev RMSE num', 'Average RMSE cat', 'St Dev RMSE cat', 
@@ -142,6 +142,6 @@ for m in miss:
                     'Average PFC (%)': average_pfc, 'St Dev PFC (%)': st_dev_pfc, 'Average execution time (s)': average_exec_time, 'St Dev execution time (s)': st_dev_exec_time}
             df_results = df_results.append(results, ignore_index=True)
 
-df_results.to_csv('imputed_data/summary.csv', index=False)
+df_results.to_csv('imputed_data/summary_ctgan.csv', index=False)
             
             
