@@ -135,6 +135,6 @@ if __name__ == '__main__':
     method = "missforest"
   
     df_results = main()
-    # df_results.to_csv('results/prediction_average_missforest_noctgan.csv', index=False)
+    df_results.to_csv('results/prediction_average_missforest_noctgan.csv', index=False)
 
 
